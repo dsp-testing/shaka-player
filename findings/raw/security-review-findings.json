@@ -1,0 +1,67 @@
+[
+    {
+        "id": "MEDIUM-1",
+        "source": "security-review",
+        "rule_id": "CWE-1321",
+        "headline": "Prototype Pollution via Cast Receiver Message Handling",
+        "message": "this.targets_ is a plain {} literal inheriting from Object.prototype. The guard if (this.targets_[targetName]) does not use Object.hasOwn()/hasOwnProperty(), so inherited keys like __proto__ and constructor are accepted. A connected Cast sender can send {type:'set', targetName:'__proto__', property:'isAdmin', value:true} to pollute Object.prototype globally on the receiver page. The 'call' case similarly allows invoking methods on Object via the constructor key. Mitigated by the fact that only authenticated Cast senders (local network + session pairing) can reach this handler.",
+        "annotation_level": "warning",
+        "file_path": "lib/cast/cast_receiver.js",
+        "start_line": 705,
+        "end_line": 736,
+        "start_column": null,
+        "end_column": null
+    },
+    {
+        "id": "LOW-1",
+        "source": "security-review",
+        "rule_id": "CWE-116",
+        "headline": "Unescaped CSS url() Construction in Subtitle Background",
+        "message": "The single-quote-delimited url('...') for cue.backgroundImage is built via raw string concatenation at line 900. A crafted TTML file can break out of the quoted URL context by injecting a closing quote, producing a second url() layer that causes the browser to fetch an attacker-controlled URL. Impact is limited because the attacker who controls the TTML already controls manifest segment URLs. Defense-in-depth fix: escape cue.backgroundImage with CSS.escape() before concatenation.",
+        "annotation_level": "warning",
+        "file_path": "lib/text/ui_text_displayer.js",
+        "start_line": 900,
+        "end_line": 900,
+        "start_column": null,
+        "end_column": null
+    },
+    {
+        "id": "LOW-2",
+        "source": "security-review",
+        "rule_id": "CWE-532",
+        "headline": "Sensitive License Material Logged When logLicenseExchange Enabled",
+        "message": "When the opt-in drm.logLicenseExchange configuration flag is set, full EME license request and response bodies are written to the browser console as base64. License responses contain content decryption keys; in deployments that ship console logs to telemetry or where the page is open to third-party scripts, this leaks key material outside the EME secure path. The flag is off by default and clearly intended for debugging, making this a documentation/foot-gun finding rather than a vulnerability.",
+        "annotation_level": "warning",
+        "file_path": "lib/drm/drm_engine.js",
+        "start_line": 1521,
+        "end_line": 1524,
+        "start_column": null,
+        "end_column": null
+    },
+    {
+        "id": "INFO-1",
+        "source": "security-review",
+        "rule_id": "",
+        "headline": "App Engine Cookie Handler: Unhandled Exception & Missing Import",
+        "message": "A posterdate cookie with non-integer segments (e.g. 'foo') causes int('foo') -> ValueError -> HTTP 500. Separately, the error-path branch references sys which is never imported, causing NameError if reached. Both are self-DoS only: the cookie is the user's own and no path traversal is possible since the name is dictionary-looked-up. Fix: wrap parse in try/except ValueError and add import sys.",
+        "annotation_level": "info",
+        "file_path": "app-engine/shaka-player-demo/main.py",
+        "start_line": 57,
+        "end_line": 72,
+        "start_column": null,
+        "end_column": null
+    },
+    {
+        "id": "INFO-2",
+        "source": "security-review",
+        "rule_id": "",
+        "headline": "npm audit: 30 advisories in devDependencies (build-time only)",
+        "message": "npm audit reports 3 critical, 6 high, 18 moderate, 3 low advisories across devDependencies. Key issues include form-data predictable boundary generation (via karma), semver ReDoS (via core-js-compat), js-yaml prototype pollution in merge key, and brace-expansion ReDoS. Shaka Player ships zero runtime dependencies — all flagged packages are build/test-time only and not bundled into dist/ artifacts. Exposure is limited to developer/CI machines.",
+        "annotation_level": "info",
+        "file_path": "package.json",
+        "start_line": 1,
+        "end_line": 1,
+        "start_column": null,
+        "end_column": null
+    }
+]
